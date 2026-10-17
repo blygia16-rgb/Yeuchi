@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Một chút đáng yêu cho ngày đặc biệt ♥</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #080b11;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            perspective: 1000px;
+            user-select: none;
+            transition: background 1s ease;
+        }
+        .heart-fall {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 20px;
+            animation: fall linear infinite;
+            z-index: 1;
+            display: none;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        .stage-container {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            position: relative; transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sleep-screen {
+            position: absolute; text-align: center; z-index: 10;
+            backface-visibility: hidden; width: 90%; max-width: 400px;
+        }
+        .glow-bg {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-25%, -65%) scale(1);
+            filter: blur(20px);
+            z-index: 1;
+            pointer-events: none;
+            transition: all 0.6s ease;
+        }
+        .eyes { display: flex; justify-content: center; gap: 28px; margin-bottom: 35px; position: relative; z-index: 2; }
+        .eye {
+            width: 55px; 
+            height: 55px; 
+            background-color: #00e5ff; 
+            border-radius: 14px; 
+            box-shadow: 0 0 20px #00e5ff, inset 0 0 10px rgba(255,255,255,0.6);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scaleY(0.15);
+            opacity: 0.6;
+        }
+        .eye.open {
+            transform: scaleY(1) scaleX(1) !important;
+            opacity: 1 !important;
+            background-color: #00f5ff !important;
+            box-shadow: 0 0 35px #00e5ff, 0 0 65px #00e5ff, inset 0 0 15px #fff !important;
+        }
+        .eye.blink-act {
+            transform: scaleY(0) !important;
+            box-shadow: none !important;
+        }
+        .pi-dialogue-box {
+            min-height: 80px; display: flex; justify-content: center;
+            align-items: center; margin-bottom: 15px; position: relative; z-index: 2;
+        }
+        .pi-text {
+            color: #00e5ff; font-size: 18px; font-weight: 500; line-height: 1.5;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+            transition: all 0.3s;
+        }
+        .hint-text { color: #4b5975; font-size: 14px; animation: blink 1.2s infinite alternate; }
+        @keyframes blink { to { opacity: 0.3; } }
+        .card {
+            background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(10px);
+            padding: 35px 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(255, 77, 109, 0.3);
+            text-align: center; max-width: 420px; width: 90%; z-index: 5; border: 2px solid #fff;
+            position: absolute; transform: rotateY(180deg); backface-visibility: hidden;
+        }
+        .avatar-area { position: relative; width: 100px; height: 100px; margin: 0 auto 20px; }
+        .main-heart { font-size: 75px; color: #ff4d6d; animation: beat 0.8s infinite alternate; }
+        @keyframes beat { to { transform: scale(1.15); } }
+        h1 { color: #c9184a; font-size: 24px; margin-bottom: 18px; }
+        .letter-box { min-height: 110px; margin-bottom: 20px; }
+        .text { color: #590d22; font-size: 16.5px; line-height: 1.6; font-weight: 500; }
+        button {
+            padding: 13px 32px; border: none; border-radius: 25px; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: all 0.3s ease; background-color: #ff4d6d; color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+        button:hover { background-color: #ff758f; transform: scale(1.05); }
+        body.active { background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 50%, #ffb3c6 100%); }
+        body.active .stage-container { transform: rotateY(180deg); }
+        body.active .heart-fall { display: block; }
+        body.active .glow-bg { display: none; }
+    </style>
+</head>
+  <body onclick="handleInteraction()">
+
+    <div class="glow-bg" id="bgGlow"></div>
+
+    <div class="stage-container">
+        <div class="sleep-screen">
+            <div class="eyes">
+                <div class="eye" id="eye1"></div>
+                <div class="eye" id="eye2"></div>
+            </div>
+            <div class="pi-dialogue-box"><span class="pi-text" id="pi-speech">Pi đang ngủ... chạm vào màn hình để đánh thức nhé</span></div>
+            <div class="hint-text" id="hint-text">TOUCH TO TALK</div>
+        </div>
+
+        <div class="card">
+            <div class="avatar-area"><div class="main-heart">❤️</div></div>
+            <h1>Gửi chị Hà Anh của em...</h1>
+            <div class="letter-box"><span class="text" id="typed-text"></span></div>
+            <button id="action-btn" onclick="celebrate(event)">Mở quà bí mật 🎁</button>
+        </div>
+    </div>
+
+    <script>
+        var piLines = [
+            "Chào! Bạn có ở đó không?",
+            "Tớ là Pi, một mã code được lập trình sẵn...",
+            "tớ ở đây là để đợi bạn đó!",
+            "Bảo đã gửi tặng bạn những lời chúc tốt đẹp nhất cho ngày 20/10 của bạn nè. Xem nhé..."
+            "Bảo muôn tôi gửi lời là 20/10 vui vẻ nhé,yêu Hà Anh"
+        ];
+        var currentLine = -1;
+        var isFlipped = false;
+        var sleepTimer = null; 
+        
+        var mainMessage = "Em tạo code này để tặng chị 20/10 nè,nhân ngày 20/10, em chúc cô gái của em luôn xinh đẹp, rạng rỡ và hạnh phúc nhé. Em Yêu Chị! 🥰";
+
+        var autoBlink = setInterval(function() {
+            if (currentLine === -1 && !isFlipped) {
+                var e1 = document.getElementById("eye1");
+                var e2 = document.getElementById("eye2");
+                if(e1 && e2) {
+                    e1.style.transform = "scaleY(0)"; e2.style.transform = "scaleY(0)";
+                    setTimeout(function() {
+                        if (currentLine === -1 && e1 && e2) {
+                            e1.style.transform = "scaleY(0.15)"; e2.style.transform = "scaleY(0.15)";
+                        }
+                    }, 200);
+                }
+            }
+        }, 3500);
+
+        function handleInteraction() {
+            if (isFlipped) return;
+            clearTimeout(sleepTimer);
+            var e1 = document.getElementById("eye1");
+            var e2 = document.getElementById("eye2");
+            var bgGlow = document.getElementById("bgGlow");
+            if(!e1 || !e2 || !bgGlow) return;
+
+            e1.classList.add("blink-act"); e2.classList.add("blink-act");
+
+            setTimeout(function() {
+                e1.classList.remove("blink-act"); e2.classList.remove("blink-act");
+                e1.classList.add("open"); e2.classList.add("open");
+                bgGlow.style.background = "radial-gradient(circle, rgba(0, 229, 255, 0.45) 0%, rgba(0,0,0,0) 70%)";
+                bgGlow.style.transform = "translate(-25%, -65%) scale(1.3)";
+
+                currentLine++;
+                if (currentLine < piLines.length) {
+                    document.getElementById("pi-speech").innerHTML = piLines[currentLine];
+                    document.getElementById("hint-text").innerHTML = "CHẠM ĐỂ ĐỌC TIẾP";
+
+                    sleepTimer = setTimeout(function() {
+                        e1.classList.remove("open"); e2.classList.remove("open");
+                        e1.style.transform = "scaleY(0.15)"; e2.style.transform = "scaleY(0.15)";
+                        bgGlow.style.background = "radial-gradient(circle, rgba(0, 229, 255, 0.12) 0%, rgba(0,0,0,0) 70%)";
+                        bgGlow.style.transform = "translate(-25%, -65%) scale(1)";
+                        document.getElementById("pi-speech").innerHTML = "Oáp... Pi buồn ngủ quá... chạm lại để gọi Pi nha 😴";
+                    }, 4000);
+                } else {
+                    clearInterval(autoBlink);
+                    isFlipped = true;
+                    document.body.classList.add('active');
+                    createHearts();
+                    setTimeout(function() {
+                        document.getElementById("typed-text").innerHTML = mainMessage;
+                    }, 1200);
+                }
+            }, 150);
+        }
+
+        function createHearts() {
+            setInterval(function() {
+                if(!isFlipped) return;
+                var heart = document.createElement('div');
+                heart.classList.add('heart-fall');
+                var icons = ['❤️', '🌸', '🌹', '✨', '💕'];
+                heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                document.body.appendChild(heart);
+                setTimeout(function() { heart.remove(); }, 5000);
+            }, 300);
+        }
+
+        function celebrate(e) {
+            if (e) e.stopPropagation();
+            document.querySelector('.card').innerHTML = `
+                <div class="main-heart" style="font-size: 80px;">💖👩‍❤️‍👨</div>
+                <h1 style="margin-top: 15px; color: #c9184a;">Yêu Chị Rất Nhiều!</h1>
+                <p class="text" style="margin: 20px 0;">Cảm ơn chị đã xuất hiện và trở thành một phần ngọt ngào trong cuộc sống của em. Em đã nhiều lần sai,làm chị buồn,nhưng hôm nay em đã cùng Ai như GG và gemini đễ tạo code,chúc chị 20/10 và cũng như xin lỗi mọi chuyện đã qua 🌹✨</p>
+            `;
+            setInterval(function() {
+                var heart = document.createElement('div');
+                heart.classList.add('heart-fall');
+                var celebratoryIcons = ['💝', '🌸', '🌹', '🎉', '🥰'];
+                heart.innerHTML = celebratoryIcons[Math.floor(Math.random() * celebratoryIcons.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = '1.5s';
+                document.body.appendChild(heart);
+            }, 50);
+        }
+    </script>
+</body>
+</html>
